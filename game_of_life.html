@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title> Game of Life </title>
+</head>
+
+<body>
+  <h1>Game of Life</h1>
+  <p><input type = 'button' value='init' onClick = "init()"/>
+  <input type = 'button' value='step' onClick = "doStep()"/>
+  <input type = 'button' value='run' onClick = "run()"/>
+  <input type = 'button' value='stop' onClick = "stop()"/></p> 
+  <canvas id="myCanvas" width="600" height="600"
+  style = "border:1px solid grey;"></canvas>
+ 
+<script>
+function init(){
+	stop();
+	for(let i = 0; i < fieldSize; i++)
+		for(let j = 0; j < fieldSize; j++)
+			field[i][j] = (Math.random() > 0.9) * 1;
+	Draw();
+}
+
+const fieldSize = 30;
+const celldSize = 20;
+const canvas = document.getElementById("myCanvas");
+const ctx = canvas.getContext("2d");
+ctx.fillStyle = "#F00";
+
+
+
+let field = new Array(fieldSize);
+for(let i = 0; i < fieldSize; i++)
+  field[i] = new Array(fieldSize);
+ 
+let nextField = new Array(fieldSize);
+for(let i = 0; i < fieldSize; i++)
+  nextField[i] = new Array(fieldSize);
+ 
+function neighborCount(r, c){//row column
+  let count = -field[r][c];
+  for(let i = -1; i <= 1; i++)
+    for(let j = -1; j <= 1; j++)
+      count += field[(r+i+fieldSize)%fieldSize][(c+j+fieldSize)%fieldSize];
+  return count;
+}
+ 
+function nextGen(){
+  for(let i = 0; i < fieldSize; i++)
+    for(let j = 0; j < fieldSize; j++){
+      nextField[i][j] = field[i][j];
+      if ((field[i][j] == 0) && (neighborCount(i,j) == 3))
+        {nextField[i][j] = 1;}
+      else if ((field[i][j] == 1) &&
+          ((neighborCount(i,j) < 2) || (neighborCount(i,j) > 3)))
+        {nextField[i][j] = 0;}
+    }
+}
+ 
+function doStep(){
+    nextGen();
+    for(let i = 0; i < fieldSize; i++)
+        for(let j = 0; j < fieldSize; j++)
+			field[i][j] = nextField[i][j];
+    Draw();
+}
+
+function Draw(){
+	
+  for(let i = 0; i < fieldSize; i++)
+    for(let j = 0; j < fieldSize; j++)
+      if (field[i][j] == 1){
+        ctx.fillStyle = "#F00";
+        ctx.fillRect(i * celldSize, j * celldSize, celldSize, celldSize);
+      }
+      else{
+        ctx.fillStyle = "#FFF";
+        ctx.fillRect(i * celldSize, j * celldSize, celldSize, celldSize);
+      }
+	for (let i = 1; i < 51; i++) {
+		ctx.beginPath();
+		ctx.moveTo(20*i, 0);
+		ctx.lineTo(20*i, 1000);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.moveTo(0, 20*i);
+		ctx.lineTo(1000, 20*i);
+		ctx.stroke();
+	}
+}
+ 
+/*function step(){
+	doStep();
+}*/
+var timer = null;	
+function run() {
+	timer = setInterval(doStep, 1000);
+	//return timer;
+}
+
+function stop() {
+	//let timer = run();
+	clearInterval(timer);
+}
+</script>
+
+</body>
+</html>
