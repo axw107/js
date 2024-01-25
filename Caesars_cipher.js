@@ -1,3 +1,8 @@
+/*
+сдвииг передается в качестве параметра командной строки 
+текст считывается из файла input_text.txt
+канонические частоты считываются из sf.txt
+*/
 function isLetter(ch) {
   return ch.toLowerCase() !== ch.toUpperCase();
 }
